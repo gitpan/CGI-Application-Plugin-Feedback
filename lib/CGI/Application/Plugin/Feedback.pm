@@ -4,11 +4,11 @@ use warnings;
 require Exporter;
 use vars(qw/@ISA @EXPORT_OK %EXPORT_TAGS/); 
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(feedback get_feedback_prepped feedback_exists);
+@EXPORT_OK = qw(feedback get_feedback_prepped feedback_exists get_feedback_html);
 %EXPORT_TAGS = (
  all =>  \@EXPORT_OK ,
 );
-our $VERSION = sprintf "%d.%02d", q$Revision: 1.1.1.1 $ =~ /(\d+)/g;
+our $VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /(\d+)/g;
 
 =head1 NAME
 
@@ -98,6 +98,38 @@ unlike calling feedback() alone, it does not empty out the contents.
 
 =cut
 
+
+
+=head1 RETRIEVAL METHODS
+
+Note: Calling any of these methods will automatically clear the feedback in session.
+
+=cut
+
+
+sub get_feedback_html {
+	my $self = shift;
+
+	my $feedback = $self->feedback;
+	scalar @$feedback or return '';
+
+	my $html;
+	for( @$feedback ){
+		$html.= "<p>$_</p>";
+	}
+	return $html;
+}
+
+sub get_feedback_text {
+	my $self = shift;
+
+	my $feedback = $self->feedback;
+	scalar @$feedback or return '';
+
+	my $text = join("\n\n", @$feedback );
+	return $text;
+}
+
 sub get_feedback_prepped {
 	my $self = shift;
 	my @prepped;
@@ -106,6 +138,18 @@ sub get_feedback_prepped {
 	}
 	return \@prepped;
 }
+
+=head2 get_feedback_html()
+
+If you don't want to use a template, this subroutine will return your feedback as already formatted html.
+Each entry is in a paragraph block.
+If no feedback was present, returns an empty string ''
+
+=head2 get_feedback_text()
+
+If you don't want to use a template, or html,  this subroutine will return your feedback as simple text,
+each entry is separated by two newlines.
+If no feedback was present, returns an empty string ''
 
 =head2 get_feedback_prepped()
 
@@ -124,6 +168,8 @@ Then:
 
 If your HTML template object is set to do not fail on missing params, then this is safe to do 
 even if no feedback is present?
+
+If no feedback is present, returns an array ref with no elements []
 
 =head1 Example
 
