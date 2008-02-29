@@ -3,3 +3,4 @@ MANIFEST
 Makefile.PL
 t/0.t
 META.yml                                 Module meta-data (added by MakeMaker)
+t/CGIApp.pm
